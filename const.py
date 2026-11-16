@@ -22,3 +22,7 @@ GEMINI_BASE_URL = os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googl
 PROFILE_DIR = Path(os.getenv("PROFILE_DIR", str(BASE_DIR / "profile")))
 LINKEDIN_FILE = PROFILE_DIR / "linkedin.txt"
 SUMMARY_FILE = PROFILE_DIR / "summary.txt"
+
+# Actor
+ACTOR_PROVIDER = os.getenv("ACTOR_PROVIDER", "openai")  # Options: "openai", "gemini"
+ACTOR_MODEL = os.getenv("ACTOR_MODEL", "gpt-5.4-mini")
