@@ -95,6 +95,21 @@ _CRITIC_USER_PROMPT = """
 Evaluate the candidate answer against the criteria.
 """.strip()
 
+_REVISION_SECTION = """
+
+# Previous answer rejected
+
+A reviewer rejected your previous answer to this question. Write a corrected answer that fixes the problem below and still follows all the rules above.
+
+## Your rejected answer
+
+{rejected_answer}
+
+## Reviewer feedback
+
+{feedback}
+""".rstrip()
+
 _ROLE_LABELS = {"user": "Visitor", "assistant": "Chatbot"}
 
 
@@ -137,3 +152,7 @@ def history_to_text(history: list[dict]) -> str:
 
 def build_critic_user_prompt(question: str, answer: str, history: list[dict]) -> str:
     return _CRITIC_USER_PROMPT.format(history=history_to_text(history), question=question, answer=answer)
+
+
+def build_revision_section(rejected_answer: str, feedback: str) -> str:
+    return _REVISION_SECTION.format(rejected_answer=rejected_answer, feedback=feedback)

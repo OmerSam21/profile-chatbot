@@ -1,5 +1,7 @@
 from unittest.mock import MagicMock
 
+import pytest
+
 from chatbot.actor import Actor
 
 _HISTORY = [
@@ -32,3 +34,20 @@ def test_answer_does_not_mutate_history():
     history = list(_HISTORY)
     _actor().answer("And before that?", history)
     assert history == _HISTORY
+
+
+def _sent_system_prompt(actor: Actor) -> str:
+    return _sent_messages(actor)[0]["content"]
+
+
+def test_first_attempt_keeps_plain_system_prompt():
+    actor = _actor()
+    actor.answer("Where?", [])
+    assert _sent_system_prompt(actor) == "SYSTEM"
+
+
+@pytest.mark.parametrize("text", ["I worked at Google", "Remove the Google claim"])
+def test_revision_adds_rejected_answer_and_feedback(text):
+    actor = _actor()
+    actor.answer("Where?", [], rejected_answer="I worked at Google", feedback="Remove the Google claim")
+    assert text in _sent_system_prompt(actor)
