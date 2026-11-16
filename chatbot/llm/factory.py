@@ -4,12 +4,13 @@ from openai import OpenAI
 
 from chatbot.llm.base import LLMClient
 from chatbot.llm.openai_client import OpenAICompatibleClient
-from const import GEMINI_BASE_URL, GOOGLE_API_KEY, OPENAI_API_KEY
+from const import GEMINI_BASE_URL, GOOGLE_API_KEY, GROQ_API_KEY, GROQ_BASE_URL, OPENAI_API_KEY
 
 # provider -> (api key, base url); None keeps the OpenAI default endpoint
 _PROVIDERS = {
     "openai": (OPENAI_API_KEY, None),
     "gemini": (GOOGLE_API_KEY, GEMINI_BASE_URL),
+    "groq": (GROQ_API_KEY, GROQ_BASE_URL),
 }
 
 
