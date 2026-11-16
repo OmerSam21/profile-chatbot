@@ -12,6 +12,10 @@ class Actor:
         self._system_prompt = system_prompt
         self._logger = get_logger(self.__class__.__name__)
 
+    @property
+    def model(self) -> str:
+        return self._llm.model
+
     def answer(
         self,
         question: str,

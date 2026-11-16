@@ -13,6 +13,10 @@ class Critic:
         self._system_prompt = system_prompt
         self._logger = get_logger(self.__class__.__name__)
 
+    @property
+    def model(self) -> str:
+        return self._llm.model
+
     def evaluate(self, question: str, answer: str, history: list[dict]) -> Evaluation:
         messages = [
             {"role": "system", "content": self._system_prompt},
