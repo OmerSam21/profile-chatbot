@@ -32,3 +32,7 @@ ACTOR_MODEL = os.getenv("ACTOR_MODEL", "gpt-5.4-mini")
 # Critic
 CRITIC_PROVIDER = os.getenv("CRITIC_PROVIDER", "groq")  # Options: "openai", "gemini", "groq"
 CRITIC_MODEL = os.getenv("CRITIC_MODEL", "openai/gpt-oss-120b")
+
+# Answer loop
+MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "3"))
+RUN_LOG_FILE = Path(os.getenv("RUN_LOG_FILE", str(BASE_DIR / "logs" / "runs.jsonl")))
