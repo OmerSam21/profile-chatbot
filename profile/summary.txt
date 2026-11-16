@@ -1,6 +1,6 @@
 SAMPLE PROFILE - This is a fictional person created for a course assignment. Any resemblance to a real person is coincidental.
 
-My name is Yarden Kessler. I grew up in Haifa and moved to Tel Aviv for my B.Sc. in Computer Science, and I have lived there ever since. I first got into programming during my military service, where I wrote internal tools for logistics planning and discovered that I like building things other people rely on every day.
+My name is Yarden Kessler (he/him). I grew up in Haifa and moved to Tel Aviv for my B.Sc. in Computer Science, and I have lived there ever since. I first got into programming during my military service, where I wrote internal tools for logistics planning and discovered that I like building things other people rely on every day.
 
 Today I work as a Senior Backend Engineer at Lumenrail, where I lead the backend work of the routing team. What I enjoy most is taking a slow or fragile system and making it fast, observable and boring in the good sense. My proudest project there was moving our route-planning service to an event-driven design, and more recently building an LLM-based ticket triage service that our support team actually uses.
 
