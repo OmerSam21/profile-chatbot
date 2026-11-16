@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from openai import OpenAI, OpenAIError
+from pydantic import ValidationError
 
 from chatbot.exceptions import LLMError
+from chatbot.llm.base import T
 from logging_utils import get_logger
 
 logger = get_logger(__name__)
@@ -33,3 +35,23 @@ class OpenAICompatibleClient:
             extra={"extra_data": {"model": self._model, "messages": len(messages), "response_length": len(content)}},
         )
         return content
+
+    def parse(self, messages: list[dict], response_model: type[T]) -> T:
+        try:
+            response = self._client.chat.completions.parse(
+                model=self._model,
+                messages=messages,
+                response_format=response_model,
+            )
+        except (OpenAIError, ValidationError) as e:
+            raise LLMError(f"{self._model} structured call failed: {e}") from e
+
+        parsed = response.choices[0].message.parsed
+        if parsed is None:
+            raise LLMError(f"{self._model} returned no valid {response_model.__name__}")
+
+        logger.info(
+            "LLM structured output parsed",
+            extra={"extra_data": {"model": self._model, "response_model": response_model.__name__}},
+        )
+        return parsed
