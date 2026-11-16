@@ -1,0 +1,77 @@
+SAMPLE PROFILE - This is a fictional person created for a course assignment. Any resemblance to a real person is coincidental.
+
+Yarden Kessler
+Senior Backend Engineer at Lumenrail | Python, distributed systems, LLM applications
+Tel Aviv District, Israel
+Contact: yarden.kessler@example.com | linkedin.com/in/yarden-kessler-sample
+
+About
+Backend engineer with 4+ years of experience building data-heavy services in Python and Go. I enjoy turning messy, real-world workflows into reliable systems, and lately I have been focused on bringing LLM features into production in a way that can be measured and trusted. Currently a part-time M.Sc. student in Computer Science, researching how to evaluate LLM answers automatically.
+
+Experience
+
+Senior Backend Engineer
+Lumenrail (logistics SaaS for last-mile delivery)
+Mar 2024 - Present (2 years 9 months)
+Tel Aviv, Israel - Hybrid
+- Lead backend engineer of the routing team (5 engineers). Own the route-planning and dispatch services, written in Python (FastAPI) on PostgreSQL and RabbitMQ.
+- Led the migration of the route-planning service from a synchronous monolith endpoint to an event-driven worker architecture, cutting p95 response time from 780ms to 210ms.
+- Built an LLM-based support ticket triage service using the OpenAI API, which classifies incoming tickets and drafts replies. It reduced average first-response time by 35%.
+- Introduced contract tests between services and raised backend test coverage from 48% to 81%.
+- Mentor two junior engineers and run the team's weekly design review.
+
+Backend Engineer
+Pixelhaven (ad-tech analytics)
+Aug 2022 - Feb 2024 (1 year 7 months)
+Herzliya, Israel
+- Developed and maintained Kafka-based ingestion pipelines in Go processing about 1.2 billion events per day.
+- Rewrote the campaign reporting API in Python, adding Redis caching that lowered database load by roughly 40%.
+- Took part in the on-call rotation and wrote the team's incident runbooks.
+
+Teaching Assistant - Data Structures
+Tel Aviv University
+Oct 2021 - Jul 2022 (10 months)
+- Led weekly recitations for about 40 students and graded programming assignments in Java.
+
+Software Developer (Military Service)
+Israel Defense Forces
+Mar 2015 - Mar 2018 (3 years)
+- Developed internal C# and SQL Server tools for logistics planning in a technology unit.
+- Promoted to team lead for the last year of service, leading 3 developers.
+
+Education
+
+Reichman University
+M.Sc., Computer Science (part-time, in progress)
+2025 - 2027 (expected)
+Thesis topic: automatic evaluation of LLM-generated answers against source documents.
+
+Tel Aviv University
+B.Sc., Computer Science
+2019 - 2022
+GPA: 89. Dean's List, 2021.
+
+Projects
+
+rag-eval-kit (open source)
+2025 - Present
+A small Python library for scoring answers from retrieval-augmented chatbots on groundedness and relevance. About 300 stars on GitHub.
+
+ParkPulse
+2021
+Mobile app that predicts free street parking in Tel Aviv from municipal sensor data. Won 2nd place at the Tel Aviv University Hackathon 2021. Built with Python, scikit-learn and React Native.
+
+Skills
+Python, Go, SQL, Java, C#
+FastAPI, PostgreSQL, Redis, RabbitMQ, Kafka
+Docker, Kubernetes, AWS (ECS, Lambda, S3), GitHub Actions
+OpenAI API, prompt engineering, LLM evaluation, LangGraph
+pytest, contract testing, system design
+
+Licenses & Certifications
+AWS Certified Developer - Associate, Amazon Web Services, issued Jun 2023
+
+Languages
+Hebrew - Native
+English - Full professional proficiency
+Russian - Elementary proficiency

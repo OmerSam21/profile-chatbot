@@ -1,0 +1,11 @@
+SAMPLE PROFILE - This is a fictional person created for a course assignment. Any resemblance to a real person is coincidental.
+
+My name is Yarden Kessler. I grew up in Haifa and moved to Tel Aviv for my B.Sc. in Computer Science, and I have lived there ever since. I first got into programming during my military service, where I wrote internal tools for logistics planning and discovered that I like building things other people rely on every day.
+
+Today I work as a Senior Backend Engineer at Lumenrail, where I lead the backend work of the routing team. What I enjoy most is taking a slow or fragile system and making it fast, observable and boring in the good sense. My proudest project there was moving our route-planning service to an event-driven design, and more recently building an LLM-based ticket triage service that our support team actually uses.
+
+Working with LLMs made me curious about a hard question: how do you know an answer is correct? That is why I started a part-time M.Sc. at Reichman University, where my thesis is about evaluating LLM answers against source documents, and why I maintain a small open-source library called rag-eval-kit.
+
+I like working in small teams with clear ownership, honest code reviews and a habit of writing things down. I care about mentoring, and I try to leave every codebase a little easier to understand than I found it.
+
+I am open to conversations about backend or applied-LLM roles, speaking at meetups, and collaborations on LLM evaluation. Outside of work I run along the Tel Aviv beach promenade a few times a week and I am slowly learning to cook Georgian food.
