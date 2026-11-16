@@ -28,3 +28,7 @@ SUMMARY_FILE = PROFILE_DIR / "summary.txt"
 # Actor
 ACTOR_PROVIDER = os.getenv("ACTOR_PROVIDER", "openai")  # Options: "openai", "gemini", "groq"
 ACTOR_MODEL = os.getenv("ACTOR_MODEL", "gpt-5.4-mini")
+
+# Critic
+CRITIC_PROVIDER = os.getenv("CRITIC_PROVIDER", "groq")  # Options: "openai", "gemini", "groq"
+CRITIC_MODEL = os.getenv("CRITIC_MODEL", "openai/gpt-oss-120b")
