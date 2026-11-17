@@ -11,7 +11,6 @@ _MOCK_FEEDBACK = "Mock critic: rejected on purpose to test the attempt limit."
 
 
 class PlantedFirstDraftActor:
-    """Returns a fixed flawed draft on the first call, then defers to the real Actor."""
 
     def __init__(self, actor: Actor, draft: str):
         self._actor = actor
