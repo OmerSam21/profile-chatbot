@@ -28,7 +28,7 @@ _EXHAUSTED_MESSAGE = f"לא הצלחתי לנסח תשובה מדויקת מספ
 _ERROR_MESSAGE = "אירעה תקלה טכנית ולא הצלחתי להשלים את התשובה. נסו שוב בעוד רגע."
 
 
-def _final_message(run: QuestionRun) -> str:
+def final_message(run: QuestionRun) -> str:
     if run.outcome == Outcome.APPROVED:
         return run.final_answer
     if run.outcome == Outcome.ATTEMPTS_EXHAUSTED:
@@ -44,7 +44,7 @@ class ChatApp:
     def respond(self, message: str, history: list[dict], request: gr.Request | None = None) -> Iterator[str]:
         scenario_id = request.session_hash if request else "unknown"
         for step in self._loop.run(message, history, scenario_id):
-            yield _STAGE_MESSAGES[step] if isinstance(step, Stage) else _final_message(step)
+            yield _STAGE_MESSAGES[step] if isinstance(step, Stage) else final_message(step)
 
     def build(self) -> gr.ChatInterface:
         return gr.ChatInterface(
