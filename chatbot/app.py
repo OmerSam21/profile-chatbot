@@ -1,38 +1,50 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
+
 import gradio as gr
 
 from chatbot.actor import Actor
-from chatbot.context import build_actor_system_prompt, load_profile_sources
-from chatbot.exceptions import LLMError
+from chatbot.answer_loop import AnswerLoop, Stage
+from chatbot.context import build_actor_system_prompt, build_critic_system_prompt, load_profile_sources
+from chatbot.critic import Critic
 from chatbot.llm import create_llm_client
-from const import ACTOR_MODEL, ACTOR_PROVIDER
-from logging_utils import get_logger
-
-logger = get_logger(__name__)
+from chatbot.models import Outcome, QuestionRun
+from const import ACTOR_MODEL, ACTOR_PROVIDER, CRITIC_MODEL, CRITIC_PROVIDER, MAX_ATTEMPTS
 
 _TITLE = "צ׳אט פרופיל אישי"
 _DESCRIPTION = "שאלו אותי על לימודים, ניסיון, מיומנויות ופרויקטים. (פרופיל לדוגמה)"
 _EXAMPLES = [
-    "ספר/י לי על הרקע המקצועי שלך",
+    "ספר לי על הרקע המקצועי שלך",
     "איפה למדת?",
-    "באילו טכנולוגיות את/ה עובד/ת?",
-    "מה הפרויקט שאת/ה הכי גאה בו?",
+    "באילו טכנולוגיות אתה עובד?",
+    "מה הפרויקט שאתה הכי גאה בו?",
 ]
-_ERROR_MESSAGE = "אירעה שגיאה טכנית ביצירת התשובה. נסו שוב בעוד רגע."
+_STAGE_MESSAGES = {
+    Stage.GENERATING: "מנסח תשובה…",
+    Stage.VALIDATING: "מאמת את התשובה…",
+}
+_EXHAUSTED_MESSAGE = f"לא הצלחתי לנסח תשובה מדויקת מספיק לשאלה הזו גם אחרי {MAX_ATTEMPTS} ניסיונות. אפשר לנסח אותה מחדש?"
+_ERROR_MESSAGE = "אירעה תקלה טכנית ולא הצלחתי להשלים את התשובה. נסו שוב בעוד רגע."
+
+
+def _final_message(run: QuestionRun) -> str:
+    if run.outcome == Outcome.APPROVED:
+        return run.final_answer
+    if run.outcome == Outcome.ATTEMPTS_EXHAUSTED:
+        return _EXHAUSTED_MESSAGE
+    return _ERROR_MESSAGE
 
 
 class ChatApp:
 
-    def __init__(self, actor: Actor):
-        self._actor = actor
+    def __init__(self, loop: AnswerLoop):
+        self._loop = loop
 
-    def respond(self, message: str, history: list[dict]) -> str:
-        try:
-            return self._actor.answer(message, history)
-        except LLMError as e:
-            logger.error("Answer generation failed", extra={"extra_data": {"question": message, "error": str(e)}})
-            raise gr.Error(_ERROR_MESSAGE) from e
+    def respond(self, message: str, history: list[dict], request: gr.Request | None = None) -> Iterator[str]:
+        scenario_id = request.session_hash if request else "unknown"
+        for step in self._loop.run(message, history, scenario_id):
+            yield _STAGE_MESSAGES[step] if isinstance(step, Stage) else _final_message(step)
 
     def build(self) -> gr.ChatInterface:
         return gr.ChatInterface(
@@ -46,9 +58,10 @@ class ChatApp:
 
 
 def main() -> None:
-    llm = create_llm_client(ACTOR_PROVIDER, ACTOR_MODEL)
-    actor = Actor(llm, build_actor_system_prompt(load_profile_sources()))
-    ChatApp(actor).build().launch(inbrowser=True)
+    sources = load_profile_sources()
+    actor = Actor(create_llm_client(ACTOR_PROVIDER, ACTOR_MODEL), build_actor_system_prompt(sources))
+    critic = Critic(create_llm_client(CRITIC_PROVIDER, CRITIC_MODEL), build_critic_system_prompt(sources))
+    ChatApp(AnswerLoop(actor, critic)).build().launch(inbrowser=True)
 
 
 if __name__ == "__main__":
