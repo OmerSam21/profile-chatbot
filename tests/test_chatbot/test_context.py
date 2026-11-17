@@ -59,3 +59,7 @@ def test_history_to_text(history, expected):
 @pytest.mark.parametrize("text", ["Where?", "At Lumenrail", "Visitor: Hi"])
 def test_critic_user_prompt_includes_case(text):
     assert text in build_critic_user_prompt("Where?", "At Lumenrail", [{"role": "user", "content": "Hi"}])
+
+
+def test_critic_prompt_allows_ai_self_disclosure():
+    assert "the chatbot is an AI and must say so" in build_critic_system_prompt(_SOURCES)
