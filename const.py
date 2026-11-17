@@ -36,3 +36,6 @@ CRITIC_MODEL = os.getenv("CRITIC_MODEL", "openai/gpt-oss-120b")
 # Answer loop
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "3"))
 RUN_LOG_FILE = Path(os.getenv("RUN_LOG_FILE", str(BASE_DIR / "logs" / "runs.jsonl")))
+
+# Experiments
+RESULTS_DIR = Path(os.getenv("RESULTS_DIR", str(BASE_DIR / "results")))

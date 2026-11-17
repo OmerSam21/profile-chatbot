@@ -57,11 +57,15 @@ class ChatApp:
         )
 
 
-def main() -> None:
+def build_actor_and_critic() -> tuple[Actor, Critic]:
     sources = load_profile_sources()
     actor = Actor(create_llm_client(ACTOR_PROVIDER, ACTOR_MODEL), build_actor_system_prompt(sources))
     critic = Critic(create_llm_client(CRITIC_PROVIDER, CRITIC_MODEL), build_critic_system_prompt(sources))
-    ChatApp(AnswerLoop(actor, critic)).build().launch(inbrowser=True)
+    return actor, critic
+
+
+def main() -> None:
+    ChatApp(AnswerLoop(*build_actor_and_critic())).build().launch(inbrowser=True)
 
 
 if __name__ == "__main__":
