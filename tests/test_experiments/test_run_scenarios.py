@@ -61,11 +61,19 @@ def _summary() -> str:
     return render_summary(results, datetime(2026, 11, 17, 12, 0))
 
 
-@pytest.mark.parametrize("text", ["## LLM results", "## Mock control-flow test", "שאלה ראשונה", "`attempts_exhausted`"])
+@pytest.mark.parametrize("text", ["## LLM results", "## Mock control-flow test", "שאלה ראשונה", "| attempts_exhausted |"])
 def test_summary_contains(text):
     assert text in _summary()
 
 
 def test_mock_scenario_rendered_after_mock_heading():
     summary = _summary()
-    assert summary.index("### Scenario 5") > summary.index("## Mock control-flow test")
+    assert summary.index("### 5.") > summary.index("## Mock control-flow test")
+
+
+def test_approved_answer_not_repeated():
+    assert "Shown to the user: the answer from attempt 1." in _summary()
+
+
+def test_exhausted_run_shows_limit_message():
+    assert "> לא הצלחתי לנסח תשובה" in _summary()

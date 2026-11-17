@@ -2,29 +2,26 @@
 
 ```mermaid
 flowchart TD
-    LI["profile/linkedin.txt"] --> CTX["context.py<br/>Actor and Critic prompts"]
-    SU["profile/summary.txt"] --> CTX
-
     V(["Visitor"]) -->|"question"| UI["Gradio chat UI"]
-    H[("Chat history<br/>questions + approved answers")] <--> UI
-    UI -->|"question + history"| LOOP{{"AnswerLoop<br/>attempt n of 3"}}
+    UI <--> H[("Chat history<br/>questions + approved answers")]
+    SRC["Background sources<br/>linkedin.txt + summary.txt"]
 
-    CTX -->|"Actor system prompt"| A
-    CTX -->|"Critic system prompt"| C
-
-    LOOP --> A["Actor<br/>default: gemini-3.1-flash-lite"]
-    A -->|"candidate answer"| C["Critic<br/>default: openai/gpt-oss-120b on Groq"]
+    UI -->|"question + history"| A["Actor<br/>gemini-3.1-flash-lite"]
+    SRC -->|"system prompt"| A
+    A -->|"candidate answer"| C["Critic<br/>openai/gpt-oss-120b on Groq"]
+    SRC -->|"system prompt"| C
     C -->|"structured output"| E[/"Evaluation<br/>is_acceptable: bool<br/>feedback: str"/]
-
-    E -->|"is_acceptable = true"| OK(["Exit: approved<br/>answer shown and added to history"])
     E -->|"false, attempts left"| FB["Rejected answer + feedback"]
     FB -->|"feedback arc: revise"| A
+
+    E -->|"true"| OK(["Exit: approved<br/>answer shown and added to history"])
     E -->|"false on attempt 3"| EX(["Exit: attempts exhausted<br/>limit message shown"])
+    C -.->|"call failed or<br/>invalid output"| ERR(["Exit: technical error<br/>error message shown"])
+    A -.->|"call failed"| ERR
 
-    A -.->|"model call failed"| ERR(["Exit: technical error<br/>error message shown"])
-    C -.->|"call failed or invalid output"| ERR
-
-    LOOP --> LOG[("logs/runs.jsonl<br/>one record per question")]
+    OK --> LOG[("logs/runs.jsonl<br/>one record per question")]
+    EX --> LOG
+    ERR --> LOG
 
     classDef exit fill:#e8f5e9,stroke:#2e7d32
     classDef fail fill:#ffebee,stroke:#c62828

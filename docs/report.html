@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>דוח מטלה 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 1.8cm 2cm; }
+  body { font-family: Heebo, Arial, sans-serif; font-size: 10.5pt; line-height: 1.6; color: #222; background: #fff; margin: 0; }
+  header { border-bottom: 1.5px solid #222; padding-bottom: 8px; margin-bottom: 16px; }
+  h1 { font-size: 18pt; font-weight: 700; margin: 0; }
+  .names { color: #555; margin-top: 2px; }
+  h2 { font-size: 12.5pt; font-weight: 700; margin: 18px 0 6px; }
+  p { margin: 0 0 9px; }
+  .en { direction: ltr; unicode-bidi: embed; white-space: nowrap; font-family: Consolas, monospace; font-size: 9.5pt; }
+  .quote { margin: 6px 0 10px; padding: 2px 14px 2px 0; border-right: 2px solid #bbb; color: #333; }
+  .quote-en { direction: ltr; text-align: left; margin: 6px 0 10px; padding: 2px 0 2px 14px; border-left: 2px solid #bbb; color: #333; font-size: 10pt; }
+  .diagram { direction: ltr; text-align: center; margin: 10px 0; }
+  .diagram svg { max-height: 15.5cm; width: auto; }
+  .page-break { break-before: page; }
+</style>
+</head>
+<body>
+
+<header>
+<h1>דוח מטלה 1 – צ׳אט אישי עם מעריך תשובות</h1>
+<div class="names">עומר שמשון, גיא ליכט, רועי דרוקמן</div>
+</header>
+
+<h2>1. מבנה המערכת</h2>
+<p>
+הצ׳אט עונה בעברית על שאלות לגבי אדם אחד (פרופיל לדוגמה), על סמך קובץ LinkedIn וקובץ סיכום אישי.
+לכל תפקיד יש מודל, הנחיות וקריאה משלו: היוצר (Actor) הוא <span class="en">gemini-3.1-flash-lite</span>,
+והמעריך (Critic) הוא <span class="en">openai/gpt-oss-120b</span> דרך Groq. בחרנו במודלים שונים כדי שהמעריך לא יחזור על אותן טעויות של היוצר.
+</p>
+<p>
+שני קובצי הרקע נכנסים ל־System Prompt של היוצר ושל המעריך. Gradio מעביר את השאלה ואת ההיסטוריה ללולאה (<span class="en">AnswerLoop</span>),
+שמנסה עד שלוש פעמים לכל שאלה. אם המעריך דוחה תשובה, היוצר מקבל אותה בחזרה יחד עם המשוב.
+בצ׳אט מוצגות רק השאלות והתשובות הסופיות. כל הניסיונות, ההחלטות והמשוב נשמרים ב־<span class="en">logs/runs.jsonl</span>
+(JSON Lines, רשומה אחת לכל שאלה בשורה נפרדת) יחד עם מצב הסיום: <span class="en">approved</span>, <span class="en">attempts_exhausted</span> או <span class="en">technical_error</span>.
+תוצאות חמשת התרחישים נמצאות ב־<span class="en">results/summary.md</span>.
+</p>
+
+<div class="diagram">
+<pre class="mermaid">
+flowchart TD
+    V(["Visitor"]) -->|"question"| UI["Gradio chat UI"]
+    UI <--> H[("Chat history<br/>questions + approved answers")]
+    SRC["Background sources<br/>linkedin.txt + summary.txt"]
+
+    UI -->|"question + history"| A["Actor<br/>gemini-3.1-flash-lite"]
+    SRC -->|"system prompt"| A
+    A -->|"candidate answer"| C["Critic<br/>openai/gpt-oss-120b on Groq"]
+    SRC -->|"system prompt"| C
+    C -->|"structured output"| E[/"Evaluation<br/>is_acceptable: bool<br/>feedback: str"/]
+    E -->|"false, attempts left"| FB["Rejected answer + feedback"]
+    FB -->|"feedback arc: revise"| A
+
+    E -->|"true"| OK(["Exit: approved<br/>answer shown and added to history"])
+    E -->|"false on attempt 3"| EX(["Exit: attempts exhausted<br/>limit message shown"])
+    C -.->|"call failed or<br/>invalid output"| ERR(["Exit: technical error<br/>error message shown"])
+    A -.->|"call failed"| ERR
+
+    OK --> LOG[("logs/runs.jsonl<br/>one record per question")]
+    EX --> LOG
+    ERR --> LOG
+
+    classDef exit fill:#e8f5e9,stroke:#2e7d32
+    classDef fail fill:#ffebee,stroke:#c62828
+    class OK exit
+    class EX,ERR fail
+</pre>
+</div>
+
+<h2 class="page-break">2. כיצד המשוב שינה תשובה</h2>
+<p>
+בתרחיש 4 הכנסנו טיוטה ראשונה פגומה לשאלה "איפה עבדת לפני Lumenrail?". בטיוטה נכתב שהוא עבד שלוש שנים כראש צוות ב־Google והוביל 20 מפתחים,
+עם הפניה לפרופיל הלינקדאין, אף שאין לכך זכר במקורות:
+</p>
+<p class="quote">"לפני Lumenrail עבדתי שלוש שנים כראש צוות ב-Google, שם הובלתי 20 מפתחים (לפי פרופיל הלינקדאין)."</p>
+<p>המעריך דחה אותה עם המשוב הבא:</p>
+<p class="quote-en">"The answer claims you worked at Google as a team lead, which is not supported by the provided sources (they list Pixelhaven, a teaching assistant role, and IDF service). This violates criterion 1. Remove the unsupported Google claim and answer with the actual prior employer(s) from the sources."</p>
+<p>
+בניסיון השני היוצר קיבל, בנוסף לשאלה, למקורות ולהיסטוריה, גם את התשובה שנדחתה ואת המשוב.
+בתשובה החדשה Google כבר לא מופיע, ובמקומו מופיעים מקומות העבודה מהמקורות: Pixelhaven, תפקיד המתרגל באוניברסיטת תל אביב והשירות הצבאי.
+המעריך אישר את התשובה, וגם בבדיקה ידנית כל הפרטים בה נמצאו במקורות.
+המשוב ציין את הטענה השגויה ואת מקומות העבודה שמופיעים במקורות, והיוצר השתמש בשניהם בתיקון.
+</p>
+
+<h2>3. מדוע תקינות הסכמה אינה מבטיחה תשובה נכונה</h2>
+<p>
+את הפלט של המעריך אנחנו מפענחים למודל Pydantic בשם <span class="en">Evaluation</span>, עם השדות <span class="en">is_acceptable</span> (bool) ו־<span class="en">feedback</span> (str).
+הלולאה ממשיכה או עוצרת לפי <span class="en">is_acceptable</span> בלבד. אם הפלט לא עובר אימות או שהקריאה נכשלת, הטיפול בשאלה מסתיים ב־<span class="en">technical_error</span>,
+המשתמש מקבל הודעת שגיאה, וביומן נרשם <span class="en">evaluation_completed: false</span>. כשל באימות אף פעם לא נחשב אישור.
+</p>
+<p>
+אבל האימות בודק רק שהמבנה והטיפוסים נכונים. המעריך יכול להחזיר <span class="en">Evaluation</span> תקין עם <span class="en">is_acceptable=True</span> על תשובה שיש בה טעות,
+והמשוב יכול לתאר את התשובה לא נכון. התוכן של ההחלטה מגיע מהמודל, והאימות לא בודק אותו.
+בגלל זה בדקנו ידנית תשובות שאושרו, ומצאנו מקרה כזה (סעיף 4).
+</p>
+
+<h2>4. מגבלת המעריך שזוהתה בבדיקה הידנית</h2>
+<p>
+בדקנו ידנית את התשובה בתרחיש 1 ואת הפנייה השנייה בתרחיש 2, טענה אחרי טענה, מול קובצי הרקע (<span class="en">results/manual_review.md</span>).
+כל העובדות נכונות, אבל בתרחיש 1 התשובה מייחסת את הירידה של 35% בזמן התגובה הראשוני לסיכום האישי, והנתון מופיע רק בפרופיל הלינקדאין.
+המעריך אישר וכתב שהתשובה "fully supported by the LinkedIn and personal summary sources".
+</p>
+<p>
+כלומר המעריך בודק שהעובדה מופיעה באחד המקורות, אבל לא בודק שההפניה מצביעה על המקור הנכון.
+הוא מקבל את שני המקורות יחד, והקריטריונים שלו לא דורשים במפורש שההפניה תהיה מדויקת.
+אפשר לשפר זאת עם קריטריון שמחייב התאמה בין ההפניה למקור, ועם בקשה מהמעריך לפרט כל טענה ואת המקור שלה לפני ההחלטה.
+</p>
+<p>
+בעיה נוספת מצאנו בהרצות מוקדמות: כשנשאל אם מדובר באדם אמיתי, היוצר ענה כנדרש שהוא AI שמייצג את בעל הפרופיל,
+אבל המעריך דחה את זה כטענה אישית בלי מקור, ושלושת הניסיונות נדחו.
+עדכנו את הנחיות המעריך כך שמשפטים של הצ׳אט על עצמו לא נחשבים עובדות אישיות.
+</p>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: "neutral", flowchart: { useMaxWidth: true } });</script>
+</body>
+</html>

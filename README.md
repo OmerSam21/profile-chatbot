@@ -6,7 +6,7 @@ A rejected answer goes back to the Actor with the Critic's feedback, up to 3 att
 
 The profile in `profile/` is a fictional sample person.
 
-See [docs/architecture.md](docs/architecture.md) for the flow diagram and the three exit paths.
+See [docs/architecture.md](docs/architecture.md) for the flow diagram and the three exit paths, and [docs/report.pdf](docs/report.pdf) for the short report (Hebrew, built from `docs/report.html`).
 
 ## Requirements
 
@@ -97,6 +97,6 @@ chatbot/
 experiments/        Scenario definitions and runner
 profile/            Sample LinkedIn profile and personal summary
 results/            Scenario results and manual review
-docs/               Architecture diagram
+docs/               Architecture diagram and report
 tests/              Unit tests
 ```
