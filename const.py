@@ -26,8 +26,8 @@ LINKEDIN_FILE = PROFILE_DIR / "linkedin.txt"
 SUMMARY_FILE = PROFILE_DIR / "summary.txt"
 
 # Actor
-ACTOR_PROVIDER = os.getenv("ACTOR_PROVIDER", "openai")  # Options: "openai", "gemini", "groq"
-ACTOR_MODEL = os.getenv("ACTOR_MODEL", "gpt-5.4-mini")
+ACTOR_PROVIDER = os.getenv("ACTOR_PROVIDER", "gemini")  # Options: "gemini", "groq", "openai"
+ACTOR_MODEL = os.getenv("ACTOR_MODEL", "gemini-3.1-flash-lite")
 
 # Critic
 CRITIC_PROVIDER = os.getenv("CRITIC_PROVIDER", "groq")  # Options: "openai", "gemini", "groq"

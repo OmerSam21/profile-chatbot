@@ -6,7 +6,7 @@ A rejected answer goes back to the Actor with the Critic's feedback, up to 3 att
 
 The profile in `profile/` is a fictional sample person.
 
-See [docs/architecture.md](docs/architecture.md) for the flow diagram and the three exit paths, and [docs/report.pdf](docs/report.pdf) for the short report (Hebrew, built from `docs/report.html`).
+See [docs/architecture.md](docs/architecture.md) for the flow diagram and the three exit paths, and [docs/report.pdf](docs/report.pdf) for the submitted report in Hebrew. The report pages are built from `docs/report.html`, and the appendix covers the scenario results, the manual review and the screenshots in [results/screenshots/](results/screenshots/).
 
 ## Requirements
 
